@@ -1,13 +1,15 @@
+import { v4 as uuid } from 'uuid';
+
 export class Todo {
-  private readonly _id: number;
+  private readonly _id: string;
   private _title: string;
 
-  constructor(id: number, title: string) {
-    this._id = id;
+  constructor(title: string) {
+    this._id = uuid();
     this._title = title;
   }
 
-  get id(): number {
+  get id(): string {
     return this._id;
   }
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TodoRepository } from '../../repositories/todo/todo.repository';
 import { Todo } from '../../entities/todo.entity';
+import { CreateTodoDto } from '../../controllers/todo/dto/CreateTodoDto';
 
 @Injectable()
 export class TodoService {
@@ -10,21 +11,17 @@ export class TodoService {
     return this.todoRepository.find();
   }
 
-  getById(id: number): Todo {
+  getById(id: string): Todo {
     return this.todoRepository.findOne(id);
   }
 
-  createOne(todo: Todo): Todo {
-    const todoExist = this.todoRepository.findOne(todo.id);
+  createOne(todo: CreateTodoDto): Todo {
+    const newTodo = new Todo(todo.title);
 
-    if (todoExist) {
-      throw new Error('Todo already exist');
-    }
-
-    return this.todoRepository.create(todo);
+    return this.todoRepository.create(newTodo);
   }
 
-  updateOne(id: number, todo: Partial<Todo>): Todo {
+  updateOne(id: string, todo: Partial<Todo>): Todo {
     const todoExist = this.todoRepository.findOne(id);
 
     if (!todoExist) {
@@ -34,7 +31,7 @@ export class TodoService {
     return this.todoRepository.updateOne(id, todo);
   }
 
-  removeOne(id: number): Todo {
+  removeOne(id: string): Todo {
     const todoExist = this.todoRepository.findOne(id);
 
     if (!todoExist) {

@@ -1,57 +1,39 @@
 import { TodoService } from './todo.service';
 import { TodoRepository } from '../../repositories/todo/todo.repository';
 import { Todo } from '../../entities/todo.entity';
+import { todoMockService } from './todo.service.mock';
 
 describe('TodoService', () => {
   let todoService: TodoService;
   let todoRepository: TodoRepository;
 
   beforeEach(() => {
-    todoRepository = new TodoRepository();
+    todoRepository = new TodoRepository(todoMockService);
     todoService = new TodoService(todoRepository);
   });
 
   describe('getAll', () => {
     it('should return a list of todo', () => {
-      const result = [
-        new Todo(1, 'Todo 1'),
-        new Todo(2, 'Todo 2'),
-        new Todo(3, 'Todo 3'),
-      ];
-
-      jest.spyOn(todoService, 'getAll').mockImplementation(() => result);
-
-      expect(todoService.getAll()).toBe(result);
+      expect(todoService.getAll()).toBe(todoMockService);
     });
   });
 
-  describe('getOne', () => {
+  describe('getById', () => {
     it('should return a todo given an id', () => {
-      const result = new Todo(1, 'Todo mock');
+      const todo = todoMockService[0];
 
-      jest.spyOn(todoService, 'getById').mockImplementation(() => result);
-
-      expect(todoService.getById(1)).toBe(result);
-      expect(todoService.getById(1)).toBeInstanceOf(Todo);
+      expect(todoService.getById(todo.id)).toBe(todo);
+      expect(todoService.getById(todo.id)).toBeInstanceOf(Todo);
     });
 
     it('should return null if not found', () => {
-      expect(todoService.getById(5)).toBe(undefined);
+      expect(todoService.getById(undefined)).toBe(undefined);
     });
   });
 
   describe('createOne', () => {
-    it('should throw an error if a todo already exist', () => {
-      const todo = new Todo(1, 'Todo mock');
-
-      const result = new Todo(1, 'Todo 1');
-      jest.spyOn(todoRepository, 'findOne').mockImplementation(() => result);
-
-      expect(() => todoService.createOne(todo)).toThrow();
-    });
-
     it('should create a todo with the repository', () => {
-      const todo = new Todo(4, 'Todo mock');
+      const todo = new Todo('Todo mock');
 
       expect(todoRepository.create(todo)).toBe(todo);
       expect(todoRepository.find()).toContain(todo);
@@ -60,27 +42,27 @@ describe('TodoService', () => {
 
   describe('updateOne', () => {
     it('should throw an error if the todo is not found', () => {
-      const todo = new Todo(5, 'Todo mock');
-
-      expect(() => todoService.updateOne(5, todo)).toThrow();
+      expect(() => todoService.updateOne(undefined, undefined)).toThrow();
     });
 
     it('should return the updated todo', () => {
-      const todo = new Todo(1, 'Todo mock');
+      const todo = todoMockService[0];
 
-      expect(todoService.updateOne(1, todo)).toStrictEqual(todo);
+      todo.title = todoMockService[1].title;
+
+      expect(todoService.updateOne(todo.id, todo)).toStrictEqual(todo);
     });
   });
 
   describe('deleteOne', () => {
     it('should throw an error if the todo is not found', () => {
-      expect(() => todoService.removeOne(5)).toThrow();
+      expect(() => todoService.removeOne(undefined)).toThrow();
     });
 
     it('should return the removed todo', () => {
-      const todo = todoService.getById(1);
+      const todo = todoMockService[0];
 
-      expect(todoService.removeOne(1)).toBe(todo);
+      expect(todoService.removeOne(todo.id)).toBe(todo);
     });
   });
 });
