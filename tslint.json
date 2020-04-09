@@ -13,7 +13,8 @@
     "interface-name": [false],
     "arrow-parens": false,
     "object-literal-sort-keys": false,
-    "typedef": [true, "call-signature", "property-declaration"]
+    "typedef": [true, "call-signature", "property-declaration"],
+    "variable-name": [true, "allow-leading-underscore"]
   },
   "rulesDirectory": []
 }
